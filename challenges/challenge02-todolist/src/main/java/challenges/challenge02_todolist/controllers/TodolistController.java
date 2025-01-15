@@ -1,14 +1,16 @@
 package  challenges.challenge02_todolist.controllers;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
 
 import  challenges.challenge02_todolist.models.Todolist;
+import challenges.challenge02_todolist.models.enums.TodoStatus;
 import  challenges.challenge02_todolist.services.TodolistService;
 import jakarta.validation.Valid;
 
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -30,9 +33,18 @@ public class TodolistController {
     private TodolistService service;
 
     @GetMapping
-    public ResponseEntity<List<Todolist>> findAll() {
-        List<Todolist> list = service.findAll();
-        return ResponseEntity.ok().body(list);
+    public Page<Todolist> findAll(Pageable pageable) {
+        return service.findAll(pageable);
+    }
+    
+    @GetMapping("/busca")
+    public Page<Todolist> findByTitle(@RequestParam String title, Pageable pageable){
+        return service.findByTitle(title, pageable);
+    }
+
+    @GetMapping("/status")
+    public Page<Todolist> findByStatus(@RequestParam TodoStatus status, Pageable pageable){
+        return service.findByStatus(status, pageable);
     }
 
     @GetMapping("/{id}")

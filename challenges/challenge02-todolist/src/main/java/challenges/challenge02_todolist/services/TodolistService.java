@@ -1,8 +1,11 @@
 package challenges.challenge02_todolist.services;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import challenges.challenge02_todolist.models.Todolist;
@@ -15,8 +18,18 @@ public class TodolistService {
     @Autowired
     private TodolistRepository repository;
 
-    public List<Todolist> findAll(){
-        return repository.findAll();
+    public Page<Todolist> findAll(Pageable pageable){
+        Sort sort = Sort.by("title").ascending();
+        pageable = PageRequest.of(0, 5, sort);
+        return repository.findAll(pageable);
+    }
+
+    public Page<Todolist> findByTitle(String title, Pageable pageable){
+        return repository.findByTitleContaining(title, pageable);
+    }
+
+    public Page<Todolist> findByStatus(TodoStatus status, Pageable pageable){
+        return repository.findByStatus(status, pageable);
     }
 
     public Todolist findById(Long id){
